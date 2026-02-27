@@ -1,0 +1,99 @@
+name: Bloomberg APIs
+description: Collection of Bloomberg's financial data and application APIs
+image: https://www.bloomberg.com/company/logo.png
+created: '2024'
+modified: '2024'
+specificationVersion: '0.16'
+apis:
+- name: Bloomberg Data API
+  description: Provides programmatic access to Bloomberg's financial market data including real-time and historical pricing, reference data, and analytics
+  image: https://www.bloomberg.com/company/logo.png
+  humanUrl: https://www.bloomberg.com/professional/support/api-library/
+  baseUrl: https://api.bloomberg.com/
+  tags:
+  - Financial Data
+  - Market Data
+  - Real-time
+  - Historical Data
+  properties:
+  - type: Documentation
+    url: https://www.bloomberg.com/professional/support/api-library/
+  - type: OpenAPI
+    url: https://api.bloomberg.com/openapi.json
+  - type: Authentication
+    url: https://www.bloomberg.com/professional/support/api-library/#authentication
+  contact:
+  - type: Support
+    url: https://www.bloomberg.com/professional/support/
+- name: Bloomberg Terminal Connect API
+  description: Desktop API for accessing Bloomberg Terminal functionality programmatically through Excel, custom applications, and third-party systems
+  image: https://www.bloomberg.com/company/logo.png
+  humanUrl: https://www.bloomberg.com/professional/support/api-library/
+  baseUrl: https://terminal.bloomberg.com/api/
+  tags:
+  - Terminal
+  - Desktop API
+  - Excel Integration
+  - Financial Analytics
+  properties:
+  - type: Documentation
+    url: https://www.bloomberg.com/professional/support/api-library/
+  - type: SDK
+    url: https://www.bloomberg.com/professional/support/api-library/#sdk-downloads
+  contact:
+  - type: Support
+    url: https://www.bloomberg.com/professional/support/
+- name: Bloomberg B-PIPE
+  description: Real-time streaming market data feed delivering tick-by-tick data, order book information, and corporate actions
+  image: https://www.bloomberg.com/company/logo.png
+  humanUrl: https://www.bloomberg.com/professional/product/market-data-feed/
+  baseUrl: https://feed.bloomberg.com/
+  tags:
+  - Streaming Data
+  - Real-time Feed
+  - Market Data
+  - Enterprise
+  properties:
+  - type: Documentation
+    url: https://www.bloomberg.com/professional/product/market-data-feed/
+  - type: Pricing
+    url: https://www.bloomberg.com/professional/product/market-data-feed/#pricing
+  contact:
+  - type: Sales
+    url: https://www.bloomberg.com/professional/request-demo/
+- name: Bloomberg SAPI (Server API)
+  description: Server-based API for historical data, reference data, and intraday bars delivered in bulk to enterprise applications
+  image: https://www.bloomberg.com/company/logo.png
+  humanUrl: https://www.bloomberg.com/professional/support/api-library/
+  baseUrl: https://sapi.bloomberg.com/
+  tags:
+  - Server API
+  - Historical Data
+  - Reference Data
+  - Bulk Data
+  properties:
+  - type: Documentation
+    url: https://www.bloomberg.com/professional/support/api-library/
+  - type: API Guide
+    url: https://www.bloomberg.com/professional/support/api-library/#sapi
+  contact:
+  - type: Support
+    url: https://www.bloomberg.com/professional/support/
+maintainers:
+- name: Bloomberg L.P.
+  email: support@bloomberg.com
+  url: https://www.bloomberg.com
+tags:
+- Financial Services
+- Market Data
+- Real-time Data
+- Financial Analytics
+- Enterprise API
+include: []
+common:
+- type: Terms of Service
+  url: https://www.bloomberg.com/terms-of-service/
+- type: Privacy Policy
+  url: https://www.bloomberg.com/privacy/
+- type: Getting Started
+  url: https://www.bloomberg.com/professional/support/api-library/#getting-started
