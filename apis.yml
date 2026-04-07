@@ -7,11 +7,11 @@ description: >-
 type: Index
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
+  - Enterprise API
+  - Financial Analytics
   - Financial Services
   - Market Data
-  - Real-time Data
-  - Financial Analytics
-  - Enterprise API
+  - Real-Time Data
 url: >-
   https://raw.githubusercontent.com/api-evangelist/bloomberg-applications/refs/heads/main/apis.yml
 created: '2024-01-01'
@@ -26,9 +26,9 @@ apis:
     humanURL: https://www.bloomberg.com/professional/support/api-library/
     tags:
       - Financial Data
-      - Market Data
-      - Real-time
       - Historical Data
+      - Market Data
+      - Real-Time
     properties:
       - type: Documentation
         url: https://www.bloomberg.com/professional/support/api-library/
@@ -39,10 +39,10 @@ apis:
       through Excel, custom applications, and third-party systems.
     humanURL: https://www.bloomberg.com/professional/support/api-library/
     tags:
-      - Terminal
       - Desktop API
       - Excel Integration
       - Financial Analytics
+      - Terminal
     properties:
       - type: Documentation
         url: https://www.bloomberg.com/professional/support/api-library/
