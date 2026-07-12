@@ -49,6 +49,10 @@ apis:
       - type: SDKs
         url: https://bloomberg.github.io/blpapi-docs/
 common:
+  - type: VulnerabilityDisclosure
+    url: security/bloomberg-applications-vulnerability-disclosure.yml
+  - type: DomainSecurity
+    url: security/bloomberg-applications-domain-security.yml
   - type: Portal
     url: https://developer.bloomberg.com/
   - type: TermsOfService
