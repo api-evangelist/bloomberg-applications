@@ -21,6 +21,12 @@ image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/bloomberg-
 tags:
   - Enterprise API
   - Financial Analytics
+  - Financial-Services
+  - Market Data
+  - Real-Time Data
+tags_raw:
+  - Enterprise API
+  - Financial Analytics
   - Financial Services
   - Market Data
   - Real-Time Data
