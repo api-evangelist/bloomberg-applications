@@ -1,0 +1,92 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://professional.bloomberg.com/support/api-library/,
+  https://bloomberg.github.io/blpapi-docs/all_versions.html
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+description: >-
+  Bloomberg does not version this API through URL paths or media types — the versioned artifact is
+  the SDK. What Bloomberg does publish, and publishes clearly, is a two-channel release model
+  (Supported vs Experimental) and a full public archive of every SDK version, which is a stronger
+  lifecycle signal than most providers with a /v1/ prefix.
+versioning:
+  scheme: four-part SDK version (major.minor.patch.build)
+  current: 3.26.7.1
+  current_docs_version: '3.26.7'
+  protocol_version: >-
+    BLPAPI v3. The developer guide's return-code tables are explicitly scoped "v3 API ONLY",
+    which is the closest thing to a wire-protocol version Bloomberg states.
+  in_url: false
+  in_header: false
+  note: >-
+    Services are addressed by name (//blp/refdata, //blp/mktdata, //blp/apiauth, //blp/mktvwap)
+    rather than by version. Bloomberg's stated design goal is that new services can be added
+    without changing the SDK interface, so consumers pin an SDK build, not an API version.
+release_channels:
+  - name: Supported Release
+    description: >-
+      Certified by Bloomberg's Enterprise Products team for use by Bloomberg customers. This is
+      the channel production consumers should pin.
+    current:
+      cpp: 3.26.7.1
+      java: 3.26.7.1
+      dotnet: 3.26.7.1
+      python: '3.26.7'
+  - name: Experimental Release
+    description: >-
+      Not yet certified for customer use. Released by the API library engineering team to address
+      a specific issue or add a feature. Bloomberg's own instruction is that "customers should not
+      use these releases unless specifically directed to do so."
+    current:
+      macos_arm_cpp: 3.26.7.1
+      macos_arm_java: 3.26.6.1
+      dotnet_ffi: prerelease only
+release_channels_note: >-
+  The channel is stated per platform on the API Library page, not per package, so the same
+  version number can be Supported on Linux and Experimental on macOS ARM. An agent choosing a
+  build must read the platform row, not the version.
+version_history:
+  published: true
+  url: https://bloomberg.github.io/blpapi-docs/all_versions.html
+  note: >-
+    Every historical SDK version keeps its own live reference documentation tree per language
+    (cpp/, dotnet/, java/, python/), back through the 3.25.x line. Old docs are not deleted when
+    a new release ships — a genuine and unusual commitment.
+  recent:
+    - '3.26.7'
+    - '3.26.6'
+    - '3.26.5'
+    - '3.26.4'
+    - '3.26.3'
+    - '3.26.2'
+    - '3.26.1'
+    - '3.25.12'
+    - '3.25.11'
+    - '3.25.10'
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  note: >-
+    No deprecation or sunset policy page was found, and BLPAPI carries no HTTP headers to put
+    RFC 8594 signals in. Deprecation surfaces only at runtime, as an AuthorizationFailure with
+    NOT_AVAILABLE / NOT_AVAILABLE_API when "user uses an API that is either deprecated or passes
+    parameters ... not supported for the specific product." That is a failure, not a warning.
+status_page:
+  published: false
+  note: >-
+    No public status page. status.bloomberg.com does not resolve (DNS NXDOMAIN). Incident and
+    service state reach customers through service.bloomberg.com, which requires an account.
+sla:
+  published: false
+  note: SLAs are contractual under Data License / B-PIPE agreements; nothing is published.
+support:
+  ticketing: https://service.bloomberg.com/portal/tickets/new
+  phone:
+    americas: '+1 212 318 2000'
+    emea: '+44 20 7330 7500'
+    asia_pacific: '+65 6212 1000'
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

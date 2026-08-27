@@ -1,0 +1,135 @@
+generated: '2026-08-27'
+method: probed
+source: live GET of /.well-known/* on every Bloomberg host named in apis.yml
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+description: >-
+  Probe of the RFC 8615 well-known namespace across every host in the Bloomberg
+  Applications surface. bloomberg.com serves three real documents: an RFC 9116
+  security.txt, an OpenID Connect discovery document, and an RFC 8414 OAuth 2.0
+  authorization server metadata document. developer.bloomberg.com and
+  data.bloomberg.com are single-page applications whose catch-all route answers
+  200 with an HTML shell for every path — those are recorded as misses, not hits.
+  api.bloomberg.com (the Data License / HAPI gateway) rejects every anonymous
+  request with a JSON 403 before routing, so no well-known document is reachable
+  there without a JWT.
+hosts:
+  - host: www.bloomberg.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        file: well-known/bloomberg-applications-security.txt
+        content_type: text/plain; charset=UTF-8
+        note: RFC 9116 compliant; Contact, Canonical, Policy, Preferred-Languages and Expires all present.
+      - path: /.well-known/openid-configuration
+        status: 200
+        file: well-known/bloomberg-applications-openid-configuration.json
+        content_type: application/json; charset=utf-8
+        note: >-
+          Real OIDC discovery document. issuer https://www.bloomberg.com, authorization and
+          token endpoints on login.bloomberg.com, JWKS published, PKCE S256, RS256 id_tokens,
+          scopes openid/user/entitlements.
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        file: well-known/bloomberg-applications-oauth-authorization-server.json
+        content_type: application/json; charset=utf-8
+        note: RFC 8414 authorization server metadata; same issuer and endpoints as the OIDC document.
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+        note: 'JSON body {"message":"Not found."} — no RFC 9727 API catalog published.'
+      - path: /.well-known/ai-plugin.json
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+      - path: /.well-known/agent.json
+        status: 404
+        file: null
+  - host: bloomberg.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        file: well-known/bloomberg-applications-security.txt
+        content_type: text/plain; charset=UTF-8
+        note: Apex serves the same document; the Canonical field points at the www host.
+  - host: api.bloomberg.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 403
+        file: null
+        note: 'Gateway returns {"error":"access_denied"} JSON for every anonymous path.'
+      - path: /.well-known/api-catalog
+        status: 403
+        file: null
+      - path: /.well-known/oauth-authorization-server
+        status: 403
+        file: null
+      - path: /.well-known/openid-configuration
+        status: 403
+        file: null
+      - path: /.well-known/ai-plugin.json
+        status: 403
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 403
+        file: null
+      - path: /.well-known/agent.json
+        status: 403
+        file: null
+  - host: developer.bloomberg.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        file: null
+        note: >-
+          NOT A DOCUMENT. The portal SPA answers 200 with an 18,505-byte HTML error page
+          for every unmatched path (the same body is returned for /openapi.json, which
+          redirects to /error-404). Treated as a miss.
+      - path: /.well-known/api-catalog
+        status: 200
+        file: null
+        note: HTML shell, same 18,505-byte body — miss.
+      - path: /.well-known/oauth-authorization-server
+        status: 200
+        file: null
+        note: HTML shell — miss.
+      - path: /.well-known/agent-card.json
+        status: 200
+        file: null
+        note: HTML shell — miss. No A2A agent card is served.
+      - path: /.well-known/agent.json
+        status: 200
+        file: null
+        note: HTML shell — miss.
+  - host: data.bloomberg.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        file: null
+        note: >-
+          NOT A DOCUMENT. The Bloomberg Enterprise Access Point Angular shell returns the
+          same 2,363-byte index.html for every path, including /openapi.json. Miss.
+      - path: /.well-known/api-catalog
+        status: 200
+        file: null
+        note: HTML shell — miss.
+      - path: /.well-known/agent-card.json
+        status: 200
+        file: null
+        note: HTML shell — miss.
+  - host: professional.bloomberg.com
+    documents:
+      - path: /.well-known/security.txt
+        status: 404
+        file: null
+      - path: /.well-known/api-catalog
+        status: 404
+        file: null
+      - path: /.well-known/agent-card.json
+        status: 404
+        file: null
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

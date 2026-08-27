@@ -1,0 +1,92 @@
+# Bloomberg Applications
+
+> Bloomberg's financial data and application API surface: the BLPAPI family (Desktop API, Server
+> API, B-PIPE) reached through first-party C++, Java, C#/.NET and Python SDKs, and the Data License
+> Hypermedia API (HAPI) reached over HTTP at api.bloomberg.com/eap. Every data path is entitlement
+> gated; the SDKs themselves download without an account.
+
+Generated 2026-08-27 by the API Evangelist enrichment pipeline from Bloomberg's own published
+surface. Bloomberg does not publish an llms.txt of its own — /llms.txt returns 403 on
+www.bloomberg.com, an SPA shell on developer.bloomberg.com and data.bloomberg.com, and 404 on
+professional.bloomberg.com.
+
+## What an agent needs to know first
+
+- There is no OpenAPI, AsyncAPI, GraphQL schema, WSDL or .proto published for this surface.
+  Contract discovery was run against every host and every well-known path; all missed.
+- BLPAPI is not HTTP. It is an asynchronous binary event queue. There are no status codes, no
+  rate-limit headers, no Retry-After and no idempotency keys. Errors arrive as typed messages with
+  a Category and Sub-Category.
+- The Data License Hypermedia API is HTTP, requires a signed JWT, and returns a vendor JSON error
+  envelope (not RFC 9457).
+- The Desktop API has no public base URL. It connects to a local socket on a machine running a
+  logged-in Bloomberg Terminal.
+- Nothing here is self-service. Data access is provisioned under contract.
+
+## APIs
+
+- [Bloomberg Data API](https://professional.bloomberg.com/products/data/data-management/data-license/):
+  Data License content over the Hypermedia API. Base https://api.bloomberg.com/eap/. Reference,
+  pricing, historical and regulatory data. JWT bearer auth; an anonymous GET returns 401
+  "No definition of jwt found in header or query string."
+- [Bloomberg Terminal Connect API](https://professional.bloomberg.com/support/api-library/):
+  The BLPAPI Desktop API. Excel and custom applications on a machine with an active Terminal
+  session. Authorization is inherited from that session.
+
+## SDKs (first-party, downloadable without an account)
+
+- C++ 3.26.7.1 (Windows, Linux, macOS ARM) — https://blpapi.bloomberg.com/download/releases/raw/files/
+- Java 3.26.7.1 (Windows, Linux; macOS ARM lags at 3.26.6.1)
+- C#/.NET 3.26.7.1 (Windows), plus a prerelease FFI build on Bloomberg's own NuGet feed
+- Python 3.26.7 — `python -m pip install --index-url=https://blpapi.bloomberg.com/repository/releases/python/simple/ blpapi`
+- Not on PyPI, npm, Maven Central or nuget.org. The `blpapi` packages on npm and PyPI are not
+  Bloomberg's.
+- Reference documentation, every version: https://bloomberg.github.io/blpapi-docs/
+
+## Documentation
+
+- API Library (SDK downloads, release channels): https://professional.bloomberg.com/support/api-library/
+- BLPAPI Core Developer Guide (PDF): https://data.bloomberglp.com/professional/sites/10/2017/03/BLPAPI-Core-Developer-Guide.pdf
+- BLPAPI Core User Guide (PDF): https://data.bloomberglp.com/professional/sites/10/2017/03/BLPAPI-Core-User-Guide.pdf
+- SDK reference, all versions: https://bloomberg.github.io/blpapi-docs/all_versions.html
+- Developer portal: https://developer.bloomberg.com/ — every route requires sign-in.
+
+## Limits that will bite
+
+- 400 fields maximum per reference data request; 25 per historical data request.
+- Requests fan out into chunks of 10 securities and 128 fields and can exceed the default 1,024
+  MaxPendingRequests ceiling.
+- Metering is securities x fields x requests. The same 3-field, 7-security request made 5 times
+  costs 105 hits. Rows returned do not matter.
+- Subscriptions to the same security count once regardless of fields or interval.
+- Daily, monthly, concurrent-subscription and device ceilings exist and are contractual — the
+  numbers are not published. They surface as DAILY_LIMIT_REACHED, MONTHLY_LIMIT_REACHED,
+  MAX_DEVICES_EXCEEDED and a LIMIT-category SubscriptionTerminated.
+- A slow consumer gets SlowConsumerWarning, then DataLoss and dropped events.
+
+## Security and identity
+
+- security.txt: https://www.bloomberg.com/.well-known/security.txt (RFC 9116, valid to 2027-07-01)
+- Vulnerability reports: reportvuln@bloomberg.net — https://www.bloomberg.com/responsible-disclosure
+- OpenID Connect discovery: https://www.bloomberg.com/.well-known/openid-configuration
+  (issuer https://www.bloomberg.com, PKCE S256, scopes openid / user / entitlements). This governs
+  bloomberg.com identity, not Data License or BLPAPI data access.
+
+## Not published
+
+- No MCP server. Public "Bloomberg MCP" servers are third-party wrappers around blpapi.
+- No A2A agent card on any host.
+- No status page (status.bloomberg.com does not resolve).
+- No public pricing, no self-service signup, no sandbox, no deprecation policy, no changelog.
+- No Postman collection found.
+
+## Repository artifacts
+
+- errors/bloomberg-applications-error-codes.yml — 54 published error codes plus the numeric table
+- rate-limits/bloomberg-applications-rate-limits.yml — the six published structural limits
+- authentication/bloomberg-applications-authentication.yml — all three auth models
+- asyncapi/bloomberg-applications-blpapi-events.yml — the real event catalog
+- conventions/bloomberg-applications-conventions.yml — pagination, tracing, backpressure, reversibility
+- packages/bloomberg-applications-packages.yml — first-party SDK versions and dates
+- lifecycle/bloomberg-applications-lifecycle.yml — release channels and version archive
+- well-known/bloomberg-applications-well-known.yml — every /.well-known probe and its status

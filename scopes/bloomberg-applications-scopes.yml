@@ -1,0 +1,52 @@
+generated: '2026-08-27'
+method: searched
+source: https://www.bloomberg.com/.well-known/openid-configuration
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+description: >-
+  The only OAuth scope surface Bloomberg publishes anonymously is the one advertised in the
+  bloomberg.com OpenID Connect discovery document. The Data License / Hypermedia API also
+  carries a scopes field inside its issued credential object, but that credential is provisioned
+  under contract and its scope vocabulary is not published on any public page, so it is recorded
+  as unpublished rather than guessed.
+authorization_server:
+  issuer: https://www.bloomberg.com
+  authorization_endpoint: https://login.bloomberg.com/api/oauth/authorize
+  token_endpoint: https://login.bloomberg.com/api/oauth/token
+  jwks_uri: https://login.bloomberg.com/api/oauth/.well-known/jwks.json
+  grant_types_supported:
+    - authorization_code
+    - refresh_token
+  code_challenge_methods_supported:
+    - S256
+scopes:
+  - name: openid
+    description: >-
+      Standard OpenID Connect scope. Requests an id_token identifying the bloomberg.com account.
+      Signed RS256; keys at the published jwks_uri.
+    source: openid-configuration scopes_supported
+  - name: user
+    description: >-
+      Access to the authenticated user's bloomberg.com profile. Bloomberg publishes the scope
+      name in discovery but no claim-level reference page; description is limited to what the
+      discovery document states.
+    source: openid-configuration scopes_supported
+  - name: entitlements
+    description: >-
+      Access to the account's Bloomberg product entitlements. This is the scope that matters for
+      API consumers: Bloomberg's authorization model is entitlement-driven end to end, and the
+      same concept appears in BLPAPI as EMRS entitlements and NOT_ENTITLED_FIELD errors.
+    source: openid-configuration scopes_supported
+unpublished:
+  - api: Bloomberg Data API (Data License / HAPI)
+    reason: >-
+      Credentials issued for api.bloomberg.com/eap carry a scopes array, but the scope vocabulary
+      is delivered with the credential under a Data License contract. No anonymous page enumerates
+      it and /.well-known/oauth-authorization-server on that host returns 403.
+docs: null
+docs_note: >-
+  No public scopes or permissions reference page was found. developer.bloomberg.com, which would
+  carry it, requires sign-in for every route.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

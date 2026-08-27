@@ -1,0 +1,122 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://www.bloomberg.com/.well-known/openid-configuration,
+  https://www.bloomberg.com/.well-known/security.txt,
+  https://api.bloomberg.com/eap/ (live 401),
+  https://data.bloomberglp.com/professional/sites/10/2017/03/BLPAPI-Core-Developer-Guide.pdf
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+description: >-
+  Standards conformance assessed from documents Bloomberg actually serves, not from marketing
+  claims. Bloomberg is a member of the OpenAPI Initiative, but no OpenAPI description of this
+  surface is published anywhere reachable, so that membership is recorded as context and not as
+  conformance.
+standards:
+  - id: rfc9116
+    name: security.txt
+    conforms: true
+    evidence: >-
+      https://www.bloomberg.com/.well-known/security.txt returns 200 text/plain with Contact,
+      Canonical, Policy, Preferred-Languages and Expires (2027-07-01T00:00:00Z) — all required and
+      recommended fields present and unexpired.
+  - id: oidc
+    name: OpenID Connect Discovery 1.0
+    conforms: true
+    evidence: >-
+      https://www.bloomberg.com/.well-known/openid-configuration returns 200 with issuer,
+      authorization_endpoint, token_endpoint, jwks_uri, response_types_supported,
+      subject_types_supported and id_token_signing_alg_values_supported (RS256).
+    scope: bloomberg.com account identity, not the Data License or BLPAPI data surface.
+  - id: oauth2
+    name: OAuth 2.0
+    conforms: true
+    evidence: >-
+      authorization_code and refresh_token grants advertised in the discovery document; scopes
+      openid, user, entitlements.
+  - id: rfc8414
+    name: OAuth 2.0 Authorization Server Metadata
+    conforms: true
+    evidence: https://www.bloomberg.com/.well-known/oauth-authorization-server returns 200 with issuer and endpoints.
+  - id: rfc7636
+    name: PKCE
+    conforms: true
+    evidence: 'code_challenge_methods_supported: ["S256"] in both discovery documents.'
+  - id: rfc7519
+    name: JSON Web Token
+    conforms: true
+    evidence: >-
+      The Data License gateway rejects anonymous requests with "No definition of jwt found in
+      header or query string" — JWT is the bearer credential for api.bloomberg.com/eap.
+  - id: rfc9457
+    name: Problem Details for HTTP APIs
+    conforms: false
+    evidence: >-
+      The HAPI error body is a vendor envelope ({error, error_description, errors[]}) served as
+      application/json, not application/problem+json.
+  - id: openapi
+    name: OpenAPI Specification
+    conforms: false
+    evidence: >-
+      No OpenAPI document is published. /openapi.json, /openapi.yaml, /swagger.json, /api-docs and
+      /redoc were probed on api.bloomberg.com (403 for every anonymous path), data.bloomberg.com
+      (SPA shell), developer.bloomberg.com (302 to /error-404) and professional.bloomberg.com (404).
+    context: >-
+      Bloomberg joined the OpenAPI Initiative in April 2020. That is an organizational fact about
+      Bloomberg, not evidence of a published description for this surface.
+  - id: asyncapi
+    name: AsyncAPI
+    conforms: false
+    evidence: >-
+      A real event and streaming surface exists (SUBSCRIPTION_DATA, SUBSCRIPTION_STATUS,
+      SESSION_STATUS, ADMIN events) but it is described only in a PDF developer guide. No AsyncAPI
+      document is published. See asyncapi/bloomberg-applications-blpapi-events.yml.
+  - id: rfc8594
+    name: Sunset HTTP Header
+    conforms: false
+    evidence: >-
+      No Sunset or Deprecation header, and no deprecation policy page. BLPAPI carries no HTTP
+      headers at all; deprecation surfaces as a runtime NOT_AVAILABLE_API authorization failure.
+  - id: graphql
+    name: GraphQL
+    conforms: false
+    evidence: No /graphql surface found on any Bloomberg host probed.
+  - id: mcp
+    name: Model Context Protocol
+    conforms: false
+    evidence: >-
+      No first-party public MCP server. Bloomberg has written publicly about building enterprise
+      MCP internally; the "Bloomberg MCP" servers in public directories are third-party wrappers
+      around blpapi. See mcp/bloomberg-applications-mcp.yml.
+  - id: a2a
+    name: A2A Agent Card
+    conforms: false
+    evidence: >-
+      /.well-known/agent-card.json and /.well-known/agent.json returned 404 on www.bloomberg.com,
+      403 on api.bloomberg.com, 404 on professional.bloomberg.com, and an HTML SPA shell (not a
+      card) on developer.bloomberg.com and data.bloomberg.com.
+domain_standards:
+  - id: figi
+    name: Financial Instrument Global Identifier (OMG FIGI, ISO-adjacent symbology)
+    conforms: unknown
+    evidence: >-
+      Not asserted. Bloomberg L.P. is the FIGI Registration Authority and BLPAPI security strings
+      accept identifier-scheme prefixes (the developer guide's own examples use /cusip/912828GM6@BGN),
+      which shows CUSIP-scheme addressing. Bloomberg publishes no contract for this surface in which
+      a FIGI or ISO 6166 scheme could be declared, so this is recorded as unknown rather than
+      claimed. The public FIGI surface is OpenFIGI, a separate Bloomberg property.
+    note: >-
+      Reward-only dimension: recorded honestly as unevaluable because there is no machine-readable
+      contract to read a domain-standard signature out of. This is an absence of evidence, not
+      evidence of non-conformance.
+compliance:
+  certifications_published: []
+  trust_center: null
+  note: >-
+    No trust center, and no named certification (SOC 2 / ISO 27001 / PCI / HIPAA / FedRAMP) was
+    found on any anonymously reachable Bloomberg page during this pass. probe-security-programs.py
+    returned trust=none. Bloomberg's compliance documentation for enterprise data products is
+    exchanged under contract.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

@@ -3,95 +3,128 @@ specificationVersion: '0.1'
 schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
 provider: Bloomberg Applications
 providerId: bloomberg-applications
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://data.bloomberglp.com/professional/sites/10/2017/03/BLPAPI-Core-Developer-Guide.pdf
+  (sections "Request Size Restrictions", 6.7 "Data Limits", 9.2.5 "//BLP/REFDATA")
 created: '2026-05-04'
-# Provenance stamped 2026-08-11: this artifact was written by the API Evangelist
-# bulk sweep dated 2026-05-04, not harvested from the provider. See roadmap#35.
-method: generated
-modified: '2026-05-04'
+modified: '2026-08-27'
+description: >-
+  Replaces a 2026-05-04 bulk-sweep scaffold that asserted free/professional/enterprise tiers with
+  X-RateLimit-* headers. None of that was Bloomberg's. Bloomberg publishes no HTTP rate-limit
+  headers on this surface, because the metered surface is not HTTP: BLPAPI meters consumption in
+  unique subscriptions and reference-data hits, and signals exhaustion as typed LIMIT messages on
+  the event stream. The structural caps below are published verbatim in Bloomberg's own developer
+  guide. The numeric daily/monthly ceilings are contractual per user and are NOT published.
+limit_count: 6
+headers: {}
+headers_note: >-
+  No X-RateLimit-*, RateLimit-* or Retry-After headers are documented or observed. The Data
+  License Hypermedia API returned no rate-limit headers on any anonymous probe of
+  api.bloomberg.com (401/403 responses only). BLPAPI is a binary event protocol with no HTTP
+  response headers at all.
+responseCodes:
+  throttled: null
+  quotaExceeded: null
+  note: >-
+    Exhaustion is signalled as a ResponseError message with category LIMIT and sub-category
+    DAILY_LIMIT_REACHED, MONTHLY_LIMIT_REACHED, FREE_TRIAL_TERM_LIMIT_REACHED or
+    MANUALLY_DISABLED, or as SubscriptionTerminated with category LIMIT for concurrent
+    subscriptions. See errors/bloomberg-applications-error-codes.yml.
+limits:
+  - name: Reference data request field cap
+    scope: per-request
+    metric: fields
+    limit: 400
+    applies:
+      - Bloomberg Data API
+      - Bloomberg Terminal Connect API
+    evidence: '"400 fields for reference data request" — Request Size Restrictions'
+  - name: Historical data request field cap
+    scope: per-request
+    metric: fields
+    limit: 25
+    applies:
+      - Bloomberg Data API
+      - Bloomberg Terminal Connect API
+    evidence: '"25 fields for historical data request" — Request Size Restrictions'
+  - name: Pending request ceiling
+    scope: per-session
+    metric: pending_requests
+    limit: 1024
+    applies:
+      - Bloomberg Data API
+      - Bloomberg Terminal Connect API
+    evidence: >-
+      "the number of requests many exceed the default 1,024 MaxPendingRequests limit" —
+      Session.MaxPendingRequests default.
+    note: >-
+      The SDK splits a request into groups of 10 securities and 128 fields, so a wide request
+      silently fans out into many pending requests and can breach this ceiling on its own.
+  - name: Request fan-out chunking
+    scope: per-request
+    metric: securities_per_chunk
+    limit: 10
+    applies:
+      - Bloomberg Data API
+      - Bloomberg Terminal Connect API
+    evidence: '"API will split the securities in the request into groups of 10 securities"'
+  - name: Request fan-out chunking (fields)
+    scope: per-request
+    metric: fields_per_chunk
+    limit: 128
+    applies:
+      - Bloomberg Data API
+      - Bloomberg Terminal Connect API
+    evidence: '"and fields into groups of 128 fields"'
+  - name: Concurrent subscription limit
+    scope: per-user
+    metric: concurrent_subscriptions
+    limit: null
+    applies:
+      - Bloomberg Data API
+      - Bloomberg Terminal Connect API
+    evidence: >-
+      SubscriptionTerminated / LIMIT — "Concurrent subscription limit exceeded." The ceiling
+      exists and is enforced; Bloomberg does not publish the number, it is set per contract.
+undocumented_ceilings:
+  - metric: daily_reference_data_hits
+    signal: ResponseError LIMIT DAILY_LIMIT_REACHED
+    note: Enforced per user; value set by contract, not published.
+  - metric: monthly_reference_data_hits
+    signal: ResponseError LIMIT MONTHLY_LIMIT_REACHED
+    note: Enforced per user; value set by contract, not published.
+  - metric: free_trial_term
+    signal: ResponseError LIMIT FREE_TRIAL_TERM_LIMIT_REACHED
+  - metric: max_devices_per_seat
+    signal: Authorization Request LIMIT MAX_DEVICES_EXCEEDED
+  - metric: max_simultaneous_authorizations
+    signal: AuthorizationFailure LIMIT MAX_AUTHORIZATIONS_EXCEEDED
+metering_model:
+  unique_subscriptions: >-
+    Subscriptions to the same security count once regardless of differing fields, options,
+    interval or delayed status. Twenty subscriptions to "IBM US Equity" count as one.
+  reference_data_hits: >-
+    securities x fields x requests. The same request for 3 fields across 7 securities made 5
+    times counts as 105 hits. Rows returned are irrelevant — tick history for 2 fields on one
+    security counts as 2 even when thousands of rows come back.
+  guidance: >-
+    Bloomberg's own advice is to centralise and deduplicate requests, and to replace polling of
+    fast-moving fields (BID/ASK every minute) with a subscription at a 1-minute interval, which
+    it states "will dramatically reduce the number of reference data hits."
+policies:
+  - name: Slow consumer backpressure
+    description: >-
+      There is no Retry-After. The backpressure signal is an ADMIN SlowConsumerWarning message;
+      ignoring it leads to DataLoss messages and silently dropped events. This is the runtime
+      signal an agent must handle on this API.
 tags:
   - Enterprise API
-  - Financial Analytics
-  - Financial Services
   - Market Data
-  - Real-Time Data
   - Rate Limiting
   - Quotas
   - Throttling
-description: Machine-readable rate limit definitions for the Bloomberg Applications API surface. Captures
-  per-tier quotas, burst behavior, response signaling, and recovery semantics. Defaults are scaffold values
-  to be replaced with published provider limits.
-headers:
-  limit: X-RateLimit-Limit
-  remaining: X-RateLimit-Remaining
-  reset: X-RateLimit-Reset
-  retryAfter: Retry-After
-  policy: RateLimit-Policy
-responseCodes:
-  throttled: 429
-  quotaExceeded: 429
-  serviceUnavailable: 503
-limits:
-  - tier: free
-    name: Free Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 10
-    burst: 20
-    timeFrame: minute
-    applies:
-      - Bloomberg Data API
-      - Bloomberg Terminal Connect API
-  - tier: free
-    name: Free Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 1000
-    timeFrame: month
-    applies:
-      - Bloomberg Data API
-      - Bloomberg Terminal Connect API
-  - tier: professional
-    name: Professional Tier Default
-    scope: api-key
-    metric: requests_per_minute
-    limit: 100
-    burst: 200
-    timeFrame: minute
-    applies:
-      - Bloomberg Data API
-      - Bloomberg Terminal Connect API
-  - tier: professional
-    name: Professional Tier Monthly Quota
-    scope: api-key
-    metric: requests_per_month
-    limit: 100000
-    timeFrame: month
-    applies:
-      - Bloomberg Data API
-      - Bloomberg Terminal Connect API
-  - tier: enterprise
-    name: Enterprise Negotiated Limit
-    scope: contract
-    metric: requests_per_minute
-    limit: 1000
-    burst: 5000
-    timeFrame: minute
-    applies:
-      - Bloomberg Data API
-      - Bloomberg Terminal Connect API
-policies:
-  - name: Backoff Strategy
-    description: Clients should implement exponential backoff with jitter, honoring the Retry-After header
-      when present.
-  - name: Burst Handling
-    description: Short bursts above the steady-state limit are tolerated up to the documented burst ceiling
-      before throttling engages.
-  - name: Quota Reset
-    description: Monthly quotas reset at the start of each calendar month in UTC. Per-minute and per-second
-      windows reset on a sliding-window basis.
-  - name: Fair Use
-    description: Even on uncapped enterprise tiers, sustained usage that materially impacts shared infrastructure
-      may be subject to fair-use throttling.
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com

@@ -1,9 +1,13 @@
 aid: bloomberg-applications
 name: Bloomberg Applications
-description: >-
-  Collection of Bloomberg's financial data and application APIs for accessing
-  market data, terminal connectivity, real-time streaming feeds, and server-side
-  data access.
+description: Bloomberg's financial data and application API surface, covering the BLPAPI family (Desktop API, Server
+  API and B-PIPE) reached through first-party C++, Java, C#/.NET and Python SDKs, and the Data License Hypermedia
+  API served over HTTP at api.bloomberg.com/eap. The surface delivers real-time and historical pricing, reference
+  data, intraday bars and ticks, and streaming market data subscriptions. BLPAPI is an asynchronous binary event
+  protocol rather than a REST API, so it carries no HTTP status codes, rate-limit headers or idempotency keys; errors
+  and quota exhaustion arrive as typed messages on the event queue. Bloomberg publishes no OpenAPI description,
+  no public pricing and no self-service signup — data access is entitlement-gated and provisioned under contract
+  — but the SDKs, their full version archive and the BLPAPI developer guides are downloadable without an account.
 type: Index
 accessModel:
   pricing: freemium
@@ -19,68 +23,127 @@ accessModel:
   method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/bloomberg-applications.png
 tags:
-  - Enterprise API
-  - Financial Analytics
-  - Financial-Services
-  - Market Data
-  - Real-Time Data
+- Enterprise API
+- Financial Analytics
+- Financial-Services
+- Market Data
+- Real-Time Data
 tags_raw:
-  - Enterprise API
-  - Financial Analytics
-  - Financial Services
-  - Market Data
-  - Real-Time Data
-url: >-
-  https://raw.githubusercontent.com/api-evangelist/bloomberg-applications/refs/heads/main/apis.yml
+- Enterprise API
+- Financial Analytics
+- Financial Services
+- Market Data
+- Real-Time Data
+url: https://raw.githubusercontent.com/api-evangelist/bloomberg-applications/refs/heads/main/apis.yml
 created: '2024-01-01'
-modified: '2026-03-16'
+modified: '2026-08-27'
 specificationVersion: '0.23'
 apis:
-  - aid: bloomberg-applications:bloomberg-data-api
-    name: Bloomberg Data API
-    description: >-
-      Provides programmatic access to Bloomberg's financial market data
-      including real-time and historical pricing, reference data, and analytics.
-    humanURL: https://www.bloomberg.com/professional/support/api-library/
-    tags:
-      - Financial Data
-      - Historical Data
-      - Market Data
-      - Real-Time
-    properties:
-      - type: Documentation
-        url: https://www.bloomberg.com/professional/support/api-library/
-  - aid: bloomberg-applications:bloomberg-terminal-connect-api
-    name: Bloomberg Terminal Connect API
-    description: >-
-      Desktop API for accessing Bloomberg Terminal functionality programmatically
-      through Excel, custom applications, and third-party systems.
-    humanURL: https://www.bloomberg.com/professional/support/api-library/
-    tags:
-      - Desktop API
-      - Excel Integration
-      - Financial Analytics
-      - Terminal
-    properties:
-      - type: Documentation
-        url: https://www.bloomberg.com/professional/support/api-library/
-      - type: SDKs
-        url: https://bloomberg.github.io/blpapi-docs/
+- aid: bloomberg-applications:bloomberg-data-api
+  name: Bloomberg Data API
+  description: Provides programmatic access to Bloomberg's financial market data including real-time and historical
+    pricing, reference data, and analytics.
+  humanURL: https://professional.bloomberg.com/products/data/data-management/data-license/
+  baseURL: https://api.bloomberg.com/eap/
+  tags:
+  - Financial Data
+  - Historical Data
+  - Market Data
+  - Real-Time
+  properties:
+  - type: Documentation
+    url: https://professional.bloomberg.com/products/data/data-management/data-license/
+  - type: Authentication
+    url: authentication/bloomberg-applications-authentication.yml
+- aid: bloomberg-applications:bloomberg-terminal-connect-api
+  name: Bloomberg Terminal Connect API
+  description: 'Desktop API for accessing Bloomberg Terminal functionality programmatically through Excel, custom
+    applications, and third-party systems. No public baseURL is recorded because none exists: the BLPAPI Desktop
+    API connects to the local Bloomberg Communication Server process on the operator''s own machine (127.0.0.1:8194)
+    and inherits authorization from the logged-in Terminal session, so the endpoint is the consumer''s workstation
+    rather than a Bloomberg-hosted host.'
+  humanURL: https://professional.bloomberg.com/support/api-library/
+  tags:
+  - Desktop API
+  - Excel Integration
+  - Financial Analytics
+  - Terminal
+  properties:
+  - type: Documentation
+    url: https://professional.bloomberg.com/support/api-library/
+  - type: APIReference
+    url: https://bloomberg.github.io/blpapi-docs/
+  - type: SDKs
+    url: packages/bloomberg-applications-packages.yml
 common:
-  - type: VulnerabilityDisclosure
-    url: security/bloomberg-applications-vulnerability-disclosure.yml
-  - type: DomainSecurity
-    url: security/bloomberg-applications-domain-security.yml
-  - type: Portal
-    url: https://developer.bloomberg.com/
-  - type: TermsOfService
-    url: https://www.bloomberg.com/notices/tos/
-  - type: PrivacyPolicy
-    url: https://www.bloomberg.com/notices/privacy/
-  - type: GettingStarted
-    url: https://www.bloomberg.com/professional/support/api-library/
-  - type: Support
-    url: https://www.bloomberg.com/professional/support/
+- type: ParentCompany
+  url: https://apis.io/providers/bloomberg/
+  name: Bloomberg
+  x-relationship: product
+  x-generated-by: bloomberg-family:2026-08-27
+- type: VulnerabilityDisclosure
+  url: security/bloomberg-applications-vulnerability-disclosure.yml
+- type: Security
+  url: security/bloomberg-applications-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/bloomberg-applications-domain-security.yml
+- type: SecurityTxt
+  url: well-known/bloomberg-applications-security.txt
+- type: WellKnown
+  url: well-known/bloomberg-applications-well-known.yml
+- type: Portal
+  url: https://developer.bloomberg.com/
+- type: Documentation
+  url: https://professional.bloomberg.com/support/documentation/
+- type: APIReference
+  url: https://bloomberg.github.io/blpapi-docs/
+- type: GettingStarted
+  url: https://professional.bloomberg.com/support/api-library/
+- type: Support
+  url: https://professional.bloomberg.com/support/
+- type: GitHubOrganization
+  url: https://github.com/bloomberg
+- type: SignUp
+  url: https://service.blpprofessional.com/portal/product/ureg?referrer=bdev
+- type: TermsOfService
+  url: https://www.bloomberg.com/notices/tos/
+- type: PrivacyPolicy
+  url: https://www.bloomberg.com/notices/privacy/
+- type: Releases
+  url: https://bloomberg.github.io/blpapi-docs/all_versions.html
+- type: Packages
+  url: packages/bloomberg-applications-packages.yml
+- type: SDKs
+  url: packages/bloomberg-applications-packages.yml
+- type: CLI
+  url: cli/bloomberg-applications-cli.yml
+- type: Authentication
+  url: authentication/bloomberg-applications-authentication.yml
+- type: OAuthScopes
+  url: scopes/bloomberg-applications-scopes.yml
+- type: ErrorCatalog
+  url: errors/bloomberg-applications-error-codes.yml
+- type: Conventions
+  url: conventions/bloomberg-applications-conventions.yml
+- type: Conformance
+  url: conformance/bloomberg-applications-conformance.yml
+- type: Lifecycle
+  url: lifecycle/bloomberg-applications-lifecycle.yml
+- type: ChangeLog
+  url: changelog/bloomberg-applications-changelog.yml
+- type: RateLimits
+  url: rate-limits/bloomberg-applications-rate-limits.yml
+- type: Plans
+  url: plans/bloomberg-applications-plans-pricing.yml
+- type: LLMsTxt
+  url: llms/bloomberg-applications-llms.txt
 maintainers:
-  - FN: Kin Lane
-    email: kin@apievangelist.com
+- FN: Kin Lane
+  email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-08-27'
+  status: enriched
+  artifacts_added: 16
+  pass: local-v1
+x-parent: bloomberg
+x-relationship: product

@@ -1,0 +1,135 @@
+generated: '2026-08-27'
+method: searched
+source: https://professional.bloomberg.com/support/api-library/
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+description: >-
+  First-party BLPAPI client libraries published by Bloomberg. Bloomberg does not
+  distribute these through the public language registries — there is no `blpapi`
+  package on PyPI (404) and the `blpapi` entry on npm is a third-party 2015 binding.
+  Every official artifact is served from Bloomberg's own distribution hosts:
+  raw archives at blpapi.bloomberg.com/download/releases/, a PEP 503 Python index at
+  blpapi.bloomberg.com/repository/releases/python/simple/, and a NuGet v3 feed at
+  nuget.blpapi.bloomberg.com/releases/v3/. Versions and dates below were read from
+  the download URLs and their Last-Modified headers on 2026-08-27.
+packages:
+  - name: blpapi (C++)
+    language: C++
+    official: true
+    registry: vendor
+    registry_url: https://blpapi.bloomberg.com/download/releases/raw/files/
+    version: 3.26.7.1
+    published: '2026-08-12'
+    release_channel: supported
+    platforms:
+      - windows
+      - linux
+      - macos-arm64
+    artifacts:
+      - https://blpapi.bloomberg.com/download/releases/raw/files/blpapi_cpp_3.26.7.1-windows.zip
+      - https://blpapi.bloomberg.com/download/releases/raw/files/blpapi_cpp_3.26.7.1-linux.tar.gz
+      - https://blpapi.bloomberg.com/download/releases/raw/files/blpapi_cpp_3.26.7.1-macos-arm64.tar.gz
+    docs: https://bloomberg.github.io/blpapi-docs/cpp/3.26.7
+    note: >-
+      Version read from the pinned download filename; published date is the Last-Modified
+      header on blpapi_cpp_3.26.7.1-linux.tar.gz (Wed, 12 Aug 2026 14:02:23 GMT).
+      The macOS ARM build is labelled an Experimental Release by Bloomberg.
+  - name: blpapi (Java)
+    language: Java
+    official: true
+    registry: vendor
+    registry_url: https://blpapi.bloomberg.com/download/releases/raw/files/
+    version: 3.26.7.1
+    published: '2026-08-12'
+    release_channel: supported
+    platforms:
+      - windows
+      - linux
+    artifacts:
+      - https://blpapi.bloomberg.com/download/releases/raw/files/blpapi_java_3.26.7.1.zip
+      - https://blpapi.bloomberg.com/download/releases/raw/files/blpapi_java_3.26.7.1.tar.gz
+    docs: https://bloomberg.github.io/blpapi-docs/java/3.26.7
+    note: >-
+      Pure Java implementation (no JNI). published from Last-Modified on
+      blpapi_java_3.26.7.1.tar.gz (Wed, 12 Aug 2026 14:11:20 GMT). The macOS ARM Java build
+      lags at 3.26.6.1 and is labelled Experimental. Not published to Maven Central —
+      a search.maven.org query for blpapi returns no Bloomberg-published coordinates.
+  - name: blpapi (C# / .NET)
+    language: .NET
+    official: true
+    registry: vendor
+    registry_url: https://blpapi.bloomberg.com/download/releases/raw/files/
+    version: 3.26.7.1
+    published: '2026-08-12'
+    release_channel: supported
+    platforms:
+      - windows
+    artifacts:
+      - https://blpapi.bloomberg.com/download/releases/raw/files/blpapi_dotnet_3.26.7.1.zip
+    docs: https://bloomberg.github.io/blpapi-docs/dotnet/3.26.7
+    note: Published date from Last-Modified on blpapi_dotnet_3.26.7.1.zip (Wed, 12 Aug 2026 14:28:12 GMT).
+  - name: Bloomberg.Blpapi
+    language: .NET
+    official: true
+    registry: nuget
+    registry_url: https://nuget.blpapi.bloomberg.com/releases/v3/index.json
+    version: null
+    published: null
+    release_channel: mixed
+    install: dotnet add package Bloomberg.Blpapi
+    install_prerelease: dotnet add package Bloomberg.Blpapi --prerelease
+    note: >-
+      Bloomberg runs its own NuGet v3 feed rather than nuget.org; the service index
+      answers 200 and advertises Catalog/3.0.0, LegacyGallery and PackageBaseAddress
+      resources, but the registration and flat-container endpoints for this package id
+      did not resolve anonymously on 2026-08-27, so version and published are null —
+      checked, nothing recordable, not a guess. Bloomberg's own instructions add the feed
+      with a published username/password pair before installing. The FFI build (a native
+      C++ backend behind a C# interface) is prerelease-only at time of probe.
+  - name: blpapi (Python)
+    language: Python
+    official: true
+    registry: vendor
+    registry_url: https://blpapi.bloomberg.com/repository/releases/python/simple/
+    version: 3.26.7
+    published: null
+    release_channel: supported
+    install: python -m pip install --index-url=https://blpapi.bloomberg.com/repository/releases/python/simple/ blpapi
+    docs: https://bloomberg.github.io/blpapi-docs/python/3.26.7
+    note: >-
+      PEP 503 simple index hosted by Bloomberg; 3.26.7 is the highest version listed on
+      2026-08-27. A simple index publishes no upload timestamps and the individual wheel
+      URLs are not linked in the anonymous listing, so published is null. NOT on PyPI:
+      pypi.org/pypi/blpapi/json returns 404. Wheels now bundle the C++ API, so a separate
+      C++ install is no longer required.
+  - name: schemadownloader
+    language: standalone tool
+    official: true
+    registry: vendor
+    registry_url: https://blpapi.bloomberg.com/download/releases/raw/files/
+    version: '1.2'
+    published: null
+    artifacts:
+      - https://blpapi.bloomberg.com/download/releases/raw/files/schemadownloader_1.2-windows.zip
+      - https://blpapi.bloomberg.com/download/releases/raw/files/schemadownloader_1.2-linux.tar.gz
+    note: >-
+      Standalone command-line tool that downloads BLPAPI service schemas so they can be
+      replayed through the TestUtil component. This is the only way to obtain a machine-readable
+      schema for a Bloomberg service, and it requires an authenticated session against a
+      Bloomberg endpoint. Version read from the pinned filename; no dated metadata published.
+third_party_seen:
+  - name: blpapi
+    registry: npm
+    version: 1.2.0
+    published: '2015-03-19'
+    official: false
+    note: Community binding, last released 2015. Not Bloomberg-published; recorded so it is not mistaken for first-party.
+  - name: '@xbbg/core'
+    registry: npm
+    version: 1.4.6
+    published: '2026-08-06'
+    official: false
+    note: Third-party Node wrapper around BLPAPI. Not Bloomberg-published.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

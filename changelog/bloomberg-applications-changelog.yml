@@ -1,0 +1,67 @@
+generated: '2026-08-27'
+method: searched
+source: https://bloomberg.github.io/blpapi-docs/all_versions.html
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+description: >-
+  Bloomberg publishes no dated, prose changelog for this API. What it does publish is a complete
+  public version archive on blpapi-docs, where every SDK release keeps its own permanent reference
+  documentation tree. Entries below record the versions Bloomberg lists, not release notes it does
+  not write — no highlights, breaking-change lists or dates are invented for versions where none
+  are published.
+scheme: four-part SDK version (major.minor.patch.build), archived per language
+current_version: 3.26.7.1
+changelog_url: null
+changelog_note: >-
+  No release-notes page was found on professional.bloomberg.com, bloomberg.github.io/blpapi-docs
+  or developer.bloomberg.com (the last requires sign-in for every route). The version archive is
+  the closest published equivalent.
+entries:
+  - version: 3.26.7.1
+    date: '2026-08-12'
+    date_source: Last-Modified header on the published C++, Java and .NET download archives
+    channel: supported
+    breaking: unknown
+    highlights: []
+    note: >-
+      Current Supported Release for Windows, Linux (C++/Java) and macOS ARM C++. macOS ARM Java
+      remains at 3.26.6.1. Bloomberg publishes no notes describing what changed.
+    docs:
+      - https://bloomberg.github.io/blpapi-docs/cpp/3.26.7
+      - https://bloomberg.github.io/blpapi-docs/java/3.26.7
+      - https://bloomberg.github.io/blpapi-docs/dotnet/3.26.7
+      - https://bloomberg.github.io/blpapi-docs/python/3.26.7
+  - version: 3.26.6.1
+    date: null
+    channel: experimental
+    breaking: unknown
+    highlights: []
+    note: Remains the current macOS ARM Java build. A 3.26.6.64-experimental .NET reference tree is also published.
+  - version: '3.26.5'
+    date: null
+    channel: archived
+    highlights: []
+  - version: '3.26.4'
+    date: null
+    channel: archived
+    highlights: []
+  - version: '3.26.3'
+    date: null
+    channel: archived
+    highlights: []
+  - version: '3.26.2'
+    date: null
+    channel: archived
+    highlights: []
+  - version: '3.26.1'
+    date: null
+    channel: archived
+    highlights: []
+  - version: '3.25.12'
+    date: null
+    channel: archived
+    highlights: []
+    note: Java stopped at 3.25.11 in this line while C++, .NET and Python shipped 3.25.12.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

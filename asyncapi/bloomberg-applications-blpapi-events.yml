@@ -1,0 +1,107 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://data.bloomberglp.com/professional/sites/10/2017/03/BLPAPI-Core-Developer-Guide.pdf
+  (section 10, "Event Types", and section 9.2, "Message Return Codes")
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+description: >-
+  Bloomberg ships a genuine push/streaming event surface and publishes no AsyncAPI document for it.
+  This file captures the real event catalog from Bloomberg's own developer guide so the surface is
+  recorded rather than lost. It is deliberately NOT an AsyncAPI document and carries no AsyncAPI or
+  Webhooks pointer: Bloomberg publishes no AsyncAPI, and there are no webhooks here — no callback
+  URL is ever registered, because delivery is a persistent subscription over the BLPAPI wire
+  protocol, not an HTTP POST to a consumer endpoint.
+surface_type: subscription streaming (binary protocol, not HTTP callbacks)
+asyncapi_published: false
+webhooks_published: false
+transport:
+  protocol: BLPAPI v3 binary wire protocol
+  delivery: >-
+    Asynchronous event queue. Data and status messages interleave on the same queue and are
+    demultiplexed by client-assigned correlation IDs.
+  services:
+    - name: //blp/mktdata
+      description: Streaming market data subscriptions.
+    - name: //blp/mktvwap
+      description: Streaming VWAP subscriptions.
+    - name: //blp/refdata
+      description: Request/response reference, historical, intraday bar and intraday tick data.
+    - name: //blp/apiauth
+      description: Authorization and entitlement state (Server API and B-PIPE).
+event_types:
+  - name: SESSION_STATUS
+    description: Changes in the state of the session — started, terminated, connection up or down.
+    messages:
+      - SessionStarted
+      - SessionTerminated
+      - SessionStartupFailure
+      - SessionConnectionUp
+      - SessionConnectionDown
+      - SessionClusterInfo
+      - SessionClusterUpdate
+  - name: SERVICE_STATUS
+    description: Changes to the status of an active open service request.
+    messages:
+      - ServiceOpened
+      - ServiceOpenFailure
+  - name: SUBSCRIPTION_DATA
+    description: Streaming subscription data delivered for active subscription requests.
+    messages:
+      - MarketDataEvents
+  - name: SUBSCRIPTION_STATUS
+    description: Changes in the state of a pending or active subscription request.
+    messages:
+      - SubscriptionStarted
+      - SubscriptionStreamsActivated
+      - SubscriptionStreamsDeactivated
+      - SubscriptionTerminated
+  - name: PARTIAL_RESPONSE
+    description: >-
+      A non-final chunk of a non-subscription response. Bloomberg splits oversized responses into
+      a sequence of these.
+  - name: RESPONSE
+    description: >-
+      The final message of a non-subscription response. A consumer must keep reading until this
+      arrives; stopping earlier truncates the result silently.
+  - name: REQUEST_STATUS
+    description: Changes in the state of a pending non-subscription request, including request timeout.
+    messages:
+      - RequestFailure
+  - name: AUTHORIZATION_STATUS
+    description: >-
+      Changes to the state of an active authorization, including entitlement changes made in EMRS
+      and mid-session revocation.
+    messages:
+      - AuthorizationSuccess
+      - AuthorizationFailure
+      - AuthorizationRevoked
+      - EntitlementChanged
+  - name: ADMIN
+    description: Administrative events from Bloomberg services, including flow control.
+    messages:
+      - SlowConsumerWarning
+      - SlowConsumerWarningCleared
+      - DataLoss
+      - RequestTemplateAvailable
+      - RequestTemplatePending
+      - RequestTemplateTerminated
+flow_control:
+  note: >-
+    The backpressure contract is explicit and unusual enough to be worth stating: a slow consumer
+    receives SlowConsumerWarning, and if it does not drain the queue the server emits DataLoss
+    messages and drops events. DataLoss is appended at the queue position where the drop happened,
+    so it can be dequeued after a SlowConsumerWarningCleared that was generated later in real time.
+    A single DataLoss message may stand for a large number of lost events.
+subscription_semantics:
+  initial_paint: >-
+    On subscribe, the API first delivers a summary of the security's current state, then streams
+    updates until the subscription is cancelled. If the initial paint fails, a SubscriptionTerminated
+    with an UNCLASSIFIED category is delivered and ticks still flow.
+  cancellation: Session.Unsubscribe() / Cancel(); terminates the stream immediately.
+  metering: >-
+    Subscriptions to the same security count once regardless of differing fields, options or
+    interval. See rate-limits/bloomberg-applications-rate-limits.yml.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

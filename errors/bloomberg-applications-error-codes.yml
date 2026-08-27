@@ -1,0 +1,390 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://data.bloomberglp.com/professional/sites/10/2017/03/BLPAPI-Core-Developer-Guide.pdf
+  (sections 9.2.1-9.2.5, "Message Return Codes (v3 API ONLY)"), plus live probes of
+  https://api.bloomberg.com/eap/
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+description: >-
+  Bloomberg publishes two entirely different error surfaces on this provider, and an agent has
+  to know which one it is looking at. BLPAPI (Desktop API, Server API, B-PIPE) returns errors as
+  typed messages inside an event stream — a Category and Sub-Category pair on a ResponseError,
+  AuthorizationFailure or fieldExceptions message — never an HTTP status. The Data License
+  Hypermedia API at api.bloomberg.com/eap returns a JSON envelope over HTTP. Neither is RFC 9457
+  problem+json. Codes below are transcribed from Bloomberg's own tables; the HTTP envelope was
+  captured from live anonymous requests on 2026-08-27.
+format: vendor-specific
+rfc9457: false
+envelopes:
+  - id: hapi-http
+    applies_to: Bloomberg Data API (api.bloomberg.com/eap)
+    media_type: application/json
+    shape:
+      error: short machine code, e.g. unauthorized_client
+      error_description: human sentence
+      errors:
+        - title: repeats the short code
+          detail: human sentence
+          id: request correlation id, also returned as the X-Request-ID response header
+          status: numeric HTTP status
+          errorCode: kebab-case machine code, e.g. unauthorized-client
+          meta:
+            server-time: unix epoch seconds
+    observed:
+      - status: 401
+        error: unauthorized_client
+        errorCode: unauthorized-client
+        detail: No definition of jwt found in header or query string.
+        probe: https://api.bloomberg.com/eap/
+      - status: 403
+        error: access_denied
+        errorCode: forbidden
+        detail: Access forbidden.
+        probe: https://api.bloomberg.com/
+    note: >-
+      Every anonymous response also carried X-Content-Type-Options, X-Frame-Options DENY and a
+      restrictive Content-Security-Policy. The correlation id is echoed in both the body and the
+      X-Request-ID header, which is the field to log when opening a Bloomberg support ticket.
+  - id: blpapi-event
+    applies_to: Bloomberg Terminal Connect API and all BLPAPI services
+    media_type: BLPAPI message (binary wire format)
+    shape:
+      eventType: 'e.g. RESPONSE, REQUEST_STATUS, AUTHORIZATION_STATUS, SUBSCRIPTION_STATUS'
+      messageType: 'e.g. ResponseError, RequestFailure, AuthorizationFailure, fieldExceptions'
+      category: coarse class
+      subcategory: specific code
+      message: human description
+    note: >-
+      Errors arrive asynchronously on the event queue alongside data. A request is only complete
+      when a RESPONSE (not PARTIAL_RESPONSE) message is received, so an agent that stops reading
+      early will miss the error message entirely.
+numeric_codes:
+  - code: 0
+    name: SUCCESS
+  - code: 100
+    name: INTERNAL_ERROR
+  - code: 101
+    name: INVALID_USER
+  - code: 102
+    name: NOT_LOGGED_ON
+  - code: 103
+    name: INVALID_DISPLAY
+  - code: 105
+    name: ENTITLEMENT_REFRESH
+  - code: 106
+    name: INVALID_AUTHTOKEN
+    note: Only used by SAUT.
+  - code: 107
+    name: EXPIRED_AUTHTOKEN
+  - code: 108
+    name: TOKEN_IN_USE
+errors:
+  - service: //blp/refdata
+    message_type: ResponseError
+    category: LIMIT
+    code: DAILY_LIMIT_REACHED
+    meaning: Daily limit for user reached.
+    action: Stop issuing requests for this user until the daily window resets; do not retry in a loop.
+  - service: //blp/refdata
+    message_type: ResponseError
+    category: LIMIT
+    code: MONTHLY_LIMIT_REACHED
+    meaning: Monthly limit for user reached.
+    action: Contact the Bloomberg account administrator; retrying will not clear it.
+  - service: //blp/refdata
+    message_type: ResponseError
+    category: LIMIT
+    code: MANUALLY_DISABLED
+    meaning: Manually disabled user.
+    action: Administrative — resolve through EMRS / Bloomberg support.
+  - service: //blp/refdata
+    message_type: ResponseError
+    category: LIMIT
+    code: FREE_TRIAL_TERM_LIMIT_REACHED
+    meaning: Free trial term (FTT) limit reached.
+  - service: //blp/refdata
+    message_type: ResponseError
+    category: NO_AUTH
+    code: INVALID_USER
+    meaning: Invalid ASID or user.
+  - service: //blp/refdata
+    message_type: ResponseError
+    category: NO_AUTH
+    code: NO_PRODUCTS_FOUND
+    meaning: No products found (Server API only).
+  - service: //blp/refdata
+    message_type: ResponseError
+    category: NO_AUTH
+    code: CROSS_FIRM_AUTH
+    meaning: User logged in from a different firm.
+  - service: //blp/refdata
+    message_type: ResponseError
+    category: NOT_ENTITLED
+    code: NOT_ENTITLED_FIELD
+    meaning: Invalid entitlements for the security or field requested.
+    action: Entitlement problem, not a request problem — drop the field rather than retrying.
+  - service: //blp/refdata
+    message_type: ResponseError
+    category: BAD_SEC
+    code: INVALID_SECURITY_IDENTIFIER
+    meaning: Invalid security requested.
+  - service: //blp/refdata
+    message_type: ResponseError
+    category: UNCLASSIFIED
+    code: UNKNOWN
+    meaning: Internal error.
+  - service: //blp/refdata
+    message_type: RequestFailure
+    category: UNCLASSIFIED
+    code: null
+    meaning: Request timeout, delivered as a REQUEST_STATUS event.
+  - service: //blp/refdata
+    request: HistoricalDataRequest
+    message_type: ResponseError
+    category: BAD_ARGS
+    code: INVALID_START_END
+    meaning: Invalid start/end date requested.
+  - service: //blp/refdata
+    request: HistoricalDataRequest
+    message_type: ResponseError
+    category: BAD_ARGS
+    code: INVALID_CURRENCY
+    meaning: Invalid currency requested.
+  - service: //blp/refdata
+    request: HistoricalDataRequest
+    message_type: ResponseError
+    category: BAD_ARGS
+    code: NO_FIELDS
+    meaning: No fields requested.
+  - service: //blp/refdata
+    request: HistoricalDataRequest
+    message_type: ResponseError
+    category: BAD_ARGS
+    code: TOO_MANY_FIELDS
+    meaning: Requested too many fields (historical requests cap at 25 fields).
+  - service: //blp/refdata
+    request: HistoricalDataRequest
+    message_type: ResponseError
+    category: BAD_FLD
+    code: INVALID_FIELD
+    meaning: Invalid field.
+  - service: //blp/refdata
+    request: HistoricalDataRequest
+    message_type: ResponseError
+    category: BAD_FLD
+    code: INVALID_OVERRIDE_FIELD
+    meaning: Invalid override field requested.
+  - service: //blp/refdata
+    request: HistoricalDataRequest
+    message_type: ResponseError
+    category: BAD_FLD
+    code: NOT_APPLICABLE_TO_HIST_DATA
+    meaning: Not a valid historical field.
+  - service: //blp/refdata
+    request: HistoricalDataRequest
+    message_type: ResponseError
+    category: BAD_FLD
+    code: NOT_APPLICABLE_TO_SECTOR
+    meaning: Historical field not applicable to that market sector.
+  - service: //blp/refdata
+    request: HistoricalDataRequest
+    message_type: ResponseError
+    category: NOT_AVAILABLE
+    code: NOT_AVAILABLE_API
+    meaning: No data currently available.
+  - service: //blp/refdata
+    request: IntradayBarRequest
+    message_type: ResponseError
+    category: BAD_ARGS
+    code: NO_EVENT_TYPE
+    meaning: No event type requested.
+  - service: //blp/refdata
+    request: IntradayTickRequest
+    message_type: ResponseError
+    category: BAD_ARGS
+    code: NO_EVENT_TYPE
+    meaning: No event type requested.
+  - service: //blp/refdata
+    request: ReferenceDataRequest
+    message_type: ResponseError
+    category: NOT_AVAILABLE
+    code: INVALID_FIELD_DATA
+    meaning: Invalid field.
+  - service: //blp/refdata
+    request: ReferenceDataRequest
+    message_type: ResponseError
+    category: BAD_ARGS
+    code: TOO_MANY_OVERRIDES
+    meaning: Too many override fields requested.
+  - service: //blp/refdata
+    request: ReferenceDataRequest
+    message_type: ResponseError
+    category: BAD_FLD
+    code: NOT_APPLICABLE_TO_REF_DATA
+    meaning: No valid reference data field requested.
+  - service: //blp/refdata
+    request: ReferenceDataRequest
+    message_type: fieldExceptions
+    category: NO_AUTH
+    code: FIELD_NOT_ALLOWED_FOR_DATAFEED_USER
+    meaning: >-
+      Field not permitted to datafeed users (B-PIPE only) — either a premium field limited to
+      BPS users/applications, a field unavailable to any B-PIPE user, or a premium field on a
+      type 9 B-PIPE license with static data disabled.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: NOT_LOGGED_IN
+    meaning: User is not logged in to Bloomberg.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: BAD_ARGS
+    code: INVALID_USER
+    meaning: Invalid user ID.
+  - service: //blp/apiauth
+    message_type: ResponseError
+    category: NO_AUTH
+    code: CROSS_FIRM_AUTH
+    meaning: Valid user ID belonging to a different firm.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: INVALID_DISPLAY
+    meaning: Invalid display (when an IP is specified).
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: TOKEN_EXPIRED
+    meaning: Timeout waiting for input, or expired token.
+    action: Regenerate the token and re-authorize.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: BAD_AUTH_TOKEN
+    meaning: Unparsable token supplied.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: CANCEL_BY_USER
+    meaning: User cancelled the request (Launchpad).
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: ENTITLEMENTS_MISMATCH
+    meaning: UserAsidEquivalence check failed.
+  - service: //blp/apiauth
+    message_type: AuthorizationRevoked
+    category: NO_AUTH
+    code: INVALID_DISPLAY
+    meaning: >-
+      The user logged in to a Bloomberg Professional service other than the one on the machine
+      running the application.
+  - service: //blp/apiauth
+    message_type: AuthorizationRevoked
+    category: NO_AUTH
+    code: LOCKOUT
+    meaning: User locked out of the Bloomberg Professional service.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NOT_AVAILABLE
+    code: NOT_AVAILABLE_API
+    meaning: >-
+      A deprecated API was used, or authorization parameters were passed that the product does
+      not support (for example emrsname + IP is not supported for Server API, and UUID + IP is
+      not supported on platforms).
+  - service: //blp/apiauth
+    message_type: Authorization Update
+    category: UNCLASSIFIED
+    code: CANCELLED_BY_SERVER
+    meaning: Authorization cancelled by the server through an EMRS administrator.
+  - service: //blp/apiauth
+    message_type: Authorization Request
+    category: NO_AUTH
+    code: NO_APP_PERM
+    meaning: User not permitted to use the application.
+  - service: //blp/apiauth
+    message_type: Authorization Request
+    category: NO_AUTH
+    code: INVALID_ASID_TYPE
+    meaning: Requested authorization type not supported for this ASID type.
+  - service: //blp/apiauth
+    message_type: Authorization Request
+    category: NO_AUTH
+    code: CREDENTIAL_REUSE
+    meaning: The user's authorization token has been used by another instance.
+  - service: //blp/apiauth
+    message_type: Authorization Request
+    category: NO_AUTH
+    code: EXPIRED_AUTHTOKEN
+    meaning: The token has expired; the user must regenerate it and authorize again.
+  - service: //blp/apiauth
+    message_type: Authorization Request
+    category: LIMIT
+    code: MAX_DEVICES_EXCEEDED
+    meaning: The maximum number of devices for this seat type has been exceeded.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: LIMIT
+    code: MAX_AUTHORIZATIONS_EXCEEDED
+    meaning: Exceeded the maximum number of simultaneous authorizations.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: EMRS_ENTITY_ASID_MISMATCH
+    meaning: Entity/ASID combination not enabled in EMRS, detected at authorization time.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: EMRS_IPRANGE_MISMATCH
+    meaning: Application IP does not match the EMRS IP ranges.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: EMRS_DATAFEED_DISABLED
+    meaning: User or application not enabled for datafeed (B-PIPE) access in EMRS.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: EMRS_PLATFORM_DISABLED
+    meaning: User or application not enabled for platform access in EMRS while authorizing via a DDM.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: INVALID_DELIVERY_POINT
+    meaning: Application has no instance created for the B-PIPE delivery point in EMRS.
+  - service: //blp/apiauth
+    message_type: AuthorizationFailure
+    category: NO_AUTH
+    code: IP_NOT_IN_RANGE
+    meaning: Authorizing from a machine blocked by the EMRS IP restrictions.
+  - service: //blp/mktdata
+    message_type: SubscriptionTerminated
+    category: LIMIT
+    code: null
+    meaning: Concurrent subscription limit exceeded.
+  - service: //blp/mktdata
+    message_type: SubscriptionTerminated
+    category: UNCLASSIFIED
+    code: null
+    meaning: >-
+      Failed to obtain initial paint — the Bloomberg Data Center could not deliver the initial
+      snapshot. The subscription survives and ticks continue to arrive.
+  - service: admin
+    message_type: SlowConsumerWarning
+    category: null
+    code: null
+    meaning: The client is consuming the event queue too slowly.
+    action: >-
+      Drain the queue faster or shed subscriptions. If ignored this is followed by DataLoss
+      messages, and events are dropped silently at the point DataLoss is queued.
+  - service: admin
+    message_type: DataLoss
+    category: null
+    code: null
+    meaning: >-
+      The event queue overflowed and events were dropped. Appended at the queue position where
+      the drop occurred, so it can be dequeued after a SlowConsumerWarningCleared.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

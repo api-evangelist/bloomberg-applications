@@ -1,0 +1,33 @@
+generated: '2026-08-27'
+method: searched
+source: https://professional.bloomberg.com/support/api-library/
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+description: >-
+  Bloomberg publishes one first-party command-line tool for this API surface: the BLPAPI Schema
+  Downloader. There is no general-purpose Bloomberg API CLI — no `bbg`, no `blp` binary that
+  wraps the data services — so this file records exactly the one tool that exists rather than
+  padding a command surface Bloomberg does not ship.
+tools:
+  - name: schemadownloader
+    version: '1.2'
+    official: true
+    purpose: >-
+      Downloads BLPAPI service schemas as standalone files so they can be replayed through the
+      SDK's TestUtil component to construct messages and test application behaviour offline.
+    significance: >-
+      This is the only published route to a machine-readable Bloomberg service schema. It does not
+      make one publicly available: the tool must run against an authenticated Bloomberg endpoint,
+      so the schema is retrievable by an entitled customer and by nobody else.
+    install:
+      windows: https://blpapi.bloomberg.com/download/releases/raw/files/schemadownloader_1.2-windows.zip
+      linux: https://blpapi.bloomberg.com/download/releases/raw/files/schemadownloader_1.2-linux.tar.gz
+    requires: An authenticated BLPAPI session (Desktop API, Server API or B-PIPE).
+    commands: []
+    commands_note: >-
+      Bloomberg publishes no flag or subcommand reference for this tool on any anonymously
+      reachable page; usage is documented inside the download and in the SDK reference. Left empty
+      rather than reconstructed.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

@@ -1,0 +1,118 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://data.bloomberglp.com/professional/sites/10/2017/03/BLPAPI-Core-Developer-Guide.pdf,
+  https://professional.bloomberg.com/support/api-library/,
+  live probes of https://api.bloomberg.com/eap/
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+description: >-
+  Cross-cutting runtime semantics for the Bloomberg API surface. The single most important
+  convention here is that BLPAPI is not request/response over HTTP: it is an asynchronous event
+  queue, and almost every convention an agent expects (status codes, retry headers, idempotency
+  keys, pagination cursors) is replaced by something else or absent entirely.
+interface_style: event-driven binary protocol (BLPAPI) plus a JWT-gated hypermedia REST API (HAPI)
+auth_style: >-
+  Three models, product-dependent — JWT for the Data License Hypermedia API, an inherited local
+  Terminal session for the Desktop API, and //blp/apiauth token/UUID authorization backed by EMRS
+  entitlements for Server API and B-PIPE. See authentication/bloomberg-applications-authentication.yml.
+idempotency:
+  supported: false
+  header: null
+  scope: null
+  retention: null
+  note: >-
+    No idempotency key, no request-deduplication header, and no documented retry-safety contract.
+    On the read surface this is mostly moot — reference and historical data requests are naturally
+    idempotent and re-issuing one simply costs another metered hit (securities x fields x requests),
+    which is a billing consequence rather than a correctness one. There is no documented write
+    surface on this provider to protect.
+pagination:
+  style: server-chunked response stream
+  params: []
+  response_fields: []
+  note: >-
+    There are no page, offset, limit or cursor parameters. When a response is too large, Bloomberg
+    splits it into a sequence of PARTIAL_RESPONSE event messages terminated by a single RESPONSE
+    message. The consumer contract is: keep reading until RESPONSE arrives; only then is the data
+    complete. A client that stops at the first message gets a silently truncated result. The SDK
+    separately fans a wide request out into chunks of 10 securities and 128 fields.
+field_selection:
+  style: explicit field list
+  note: >-
+    Fields are named explicitly and are required — there is no "return everything" mode. Field
+    count is capped (400 reference, 25 historical) and every field requested is metered, so field
+    selection is the primary cost lever on this API.
+overrides:
+  supported: true
+  note: >-
+    Requests accept override fields to reshape a calculation. Overrides are separately capped
+    (TOO_MANY_OVERRIDES) and separately validated (INVALID_OVERRIDE_FIELD).
+metadata:
+  self_describing: true
+  note: >-
+    Every field returned carries an in-memory dictionary element giving its data type and a
+    description — the payload is self-describing at runtime. Service schemas can be pulled with
+    the first-party schemadownloader tool, but only over an authenticated session.
+request_tracing:
+  hapi: >-
+    X-Request-ID response header, mirrored as errors[].id in the JSON error body. This is the
+    correlation id to quote in a support ticket.
+  blpapi: >-
+    Correlation IDs are assigned by the client per request/subscription and returned on every
+    message, which is what lets a single event queue be demultiplexed.
+versioning: >-
+  No URL or header versioning. Services are addressed by name (//blp/refdata, //blp/mktdata,
+  //blp/apiauth); consumers pin an SDK build. See lifecycle/bloomberg-applications-lifecycle.yml.
+error_envelope:
+  hapi: >-
+    JSON, not RFC 9457: {error, error_description, errors:[{title, detail, id, status, errorCode,
+    meta.server-time}]}.
+  blpapi: >-
+    Typed message on the event stream with a Category and Sub-Category pair. No HTTP status exists.
+  reference: errors/bloomberg-applications-error-codes.yml
+rate_limit_signaling:
+  headers: none
+  note: >-
+    No X-RateLimit-*, RateLimit-* or Retry-After anywhere. Exhaustion arrives as a LIMIT-category
+    message; backpressure arrives as an ADMIN SlowConsumerWarning followed, if ignored, by DataLoss
+    messages and silently dropped events. See rate-limits/bloomberg-applications-rate-limits.yml.
+datetime:
+  format: >-
+    DateTime yyyy-mm-ddThh:mm:ss (optional .xxx milliseconds, optional +tt:tt offset, no spaces);
+    Date yyyy-mm-dd; Time hh:mm:ss.xxx. Conversion must be exact and is driven by field type.
+  note: >-
+    A DateTime is a struct that may hold a partial value (a month only), so it is not always
+    convertible to a native datetime.
+concurrency:
+  thread_safe: true
+  note: The interface is documented as thread safe and thread aware.
+dry_run_mode:
+  supported: na
+  note: >-
+    No dry-run, preview or validate mode is documented. Marked na rather than absent because there
+    is no documented write surface for a dry run to rehearse.
+reversibility:
+  applicable: false
+  grade: na
+  writes_documented: false
+  reversal_operations: []
+  note: >-
+    na, not zero. The Bloomberg Data API and Terminal Connect API as profiled here are read
+    surfaces — reference data, historical data, intraday bars and ticks, and streaming market data
+    subscriptions. There is no create, update or delete operation to reverse, and therefore no
+    cancel/refund/void/restore path and no window to state. The only reversible-looking action is
+    unsubscribing from a live subscription (Session.Unsubscribe / Cancel), which stops a data
+    stream rather than undoing a persisted change; it takes effect immediately and Bloomberg
+    publishes no window because none applies. Bloomberg's order and execution management surfaces
+    (EMSX and AIM), which do carry cancellable writes, are separate products profiled in separate
+    repositories — nothing here should be read as covering them.
+cross_links:
+  errors: errors/bloomberg-applications-error-codes.yml
+  lifecycle: lifecycle/bloomberg-applications-lifecycle.yml
+  authentication: authentication/bloomberg-applications-authentication.yml
+  rate_limits: rate-limits/bloomberg-applications-rate-limits.yml
+  events: asyncapi/bloomberg-applications-blpapi-events.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

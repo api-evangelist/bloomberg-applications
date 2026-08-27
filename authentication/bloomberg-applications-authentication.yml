@@ -1,0 +1,114 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  https://www.bloomberg.com/.well-known/openid-configuration (live),
+  https://api.bloomberg.com/eap/ (live 401 challenge),
+  https://data.bloomberglp.com/professional/sites/10/2017/03/BLPAPI-Core-Developer-Guide.pdf
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+description: >-
+  Bloomberg runs three unrelated authentication models across this surface, and which one
+  applies depends entirely on which product a consumer holds. There is no published OpenAPI
+  with securitySchemes, so this profile is assembled from a live 401 challenge on the Data
+  License gateway, the OIDC/OAuth discovery documents bloomberg.com actually serves, and
+  Bloomberg's own BLPAPI Core Developer Guide.
+schemes:
+  - id: hapi-jwt
+    applies_to: Bloomberg Data API (Data License / Hypermedia API, api.bloomberg.com/eap)
+    type: http
+    scheme: bearer
+    bearer_format: JWT
+    in: header
+    location: Authorization header or query string
+    evidence:
+      probe: https://api.bloomberg.com/eap/
+      status: 401
+      body: >-
+        {"error":"unauthorized_client","error_description":"No definition of jwt found in
+        header or query string.","errors":[{"errorCode":"unauthorized-client","status":401}]}
+    credential_model: >-
+      Bloomberg issues a Data License credential object containing client_id, client_secret,
+      name, scopes and creation/expiration dates; the client signs a JWT with it per request.
+      Credentials are provisioned through the Data License contract, not through self-service.
+    note: >-
+      An anonymous request to the gateway root returns 403 access_denied; a request to /eap/
+      returns 401 with the JWT challenge above, which is how the path was confirmed to exist.
+      No anonymous /.well-known/oauth-authorization-server is reachable on this host, so the
+      token endpoint is not machine-discoverable for this API.
+  - id: bloomberg-com-oidc
+    applies_to: bloomberg.com account / entitlement checks
+    type: openIdConnect
+    openid_connect_url: https://www.bloomberg.com/.well-known/openid-configuration
+    issuer: https://www.bloomberg.com
+    authorization_endpoint: https://login.bloomberg.com/api/oauth/authorize
+    token_endpoint: https://login.bloomberg.com/api/oauth/token
+    jwks_uri: https://login.bloomberg.com/api/oauth/.well-known/jwks.json
+    grant_types:
+      - authorization_code
+      - refresh_token
+    response_types:
+      - code
+    pkce: S256
+    id_token_signing_alg: RS256
+    scopes:
+      - openid
+      - user
+      - entitlements
+    evidence:
+      probe: https://www.bloomberg.com/.well-known/openid-configuration
+      status: 200
+    note: >-
+      A genuine, anonymously discoverable OIDC provider. It governs bloomberg.com identity and
+      entitlement, not Data License or BLPAPI data access — do not present it as the API auth
+      path for either.
+  - id: blpapi-desktop
+    applies_to: Bloomberg Terminal Connect API (Desktop API)
+    type: session
+    in: local socket
+    location: 127.0.0.1:8194 on a machine running a logged-in Bloomberg Professional terminal
+    credential_model: >-
+      No API key. Authorization is inherited from the logged-in Terminal session on the same
+      host; the SDK opens a session against the local Bloomberg Communication Server process.
+    note: >-
+      This is why the Desktop API has no public base URL: the endpoint is the operator's own
+      machine. Failures surface as AuthorizationFailure/NOT_LOGGED_IN and
+      AuthorizationRevoked/INVALID_DISPLAY when the user logs in to a different terminal.
+  - id: blpapi-server-bpipe
+    applies_to: Bloomberg Server API (SAPI) and B-PIPE
+    type: token
+    service: //blp/apiauth
+    credential_model: >-
+      Applications authorize through the //blp/apiauth service using a UUID + AuthorizationRequest,
+      an EMRS application name, an IP-based display, or a generated auth token. Entitlements are
+      administered centrally in EMRS (Entitlement Management and Reporting System), and changes
+      there propagate as AUTHORIZATION_STATUS events to live sessions.
+    error_codes:
+      - INVALID_AUTHTOKEN
+      - EXPIRED_AUTHTOKEN
+      - TOKEN_IN_USE
+      - NOT_LOGGED_ON
+      - INVALID_DISPLAY
+      - INVALID_USER
+      - CROSS_FIRM_AUTH
+      - ENTITLEMENTS_MISMATCH
+      - CREDENTIAL_REUSE
+      - MAX_DEVICES_EXCEEDED
+      - MAX_AUTHORIZATIONS_EXCEEDED
+      - EMRS_IPRANGE_MISMATCH
+      - IP_NOT_IN_RANGE
+    note: >-
+      Authorization is revocable mid-session: EMRS administrators can cancel an authorization
+      and the SDK receives AuthorizationRevoked / CANCELLED_BY_SERVER. Clients must handle
+      revocation as a normal runtime event, not an error path.
+self_service: false
+onboarding: >-
+  No self-service signup exists for any of these. Data License credentials and B-PIPE/SAPI
+  entitlements are provisioned under contract; developer.bloomberg.com requires an existing
+  Bloomberg account to reach any reference documentation.
+docs:
+  - https://professional.bloomberg.com/support/api-library/
+  - https://data.bloomberglp.com/professional/sites/10/2017/03/BLPAPI-Core-Developer-Guide.pdf
+  - https://developer.bloomberg.com/
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com

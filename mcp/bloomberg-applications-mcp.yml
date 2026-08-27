@@ -1,0 +1,35 @@
+generated: '2026-08-27'
+method: searched
+source: >-
+  Web search plus live probes of api.bloomberg.com, developer.bloomberg.com, data.bloomberg.com
+  and professional.bloomberg.com
+provider: Bloomberg Applications
+providerId: bloomberg-applications
+status: none
+description: >-
+  Bloomberg publishes no first-party MCP server for this API surface. This file records the search
+  result, not a candidate: with no OpenAPI, no GraphQL schema and no anonymously readable reference
+  documentation, there is nothing to derive a tool list from that would not be invented.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: searched
+findings:
+  - Bloomberg has written publicly about building MCP for internal enterprise use, and its Head of
+    Enterprise Data has commented on MCP as a standard, but no customer-facing Bloomberg MCP
+    endpoint or Bloomberg-published MCP package was found.
+  - Servers named "Bloomberg MCP" in public MCP directories are third-party wrappers around the
+    blpapi SDK. They require the user's own Bloomberg entitlement and are not published by
+    Bloomberg. They are not recorded as a Bloomberg agent surface.
+  - No /.well-known/oauth-authorization-server or /.well-known/oauth-protected-resource is
+    anonymously reachable on api.bloomberg.com (403 on every path), so no MCP OAuth metadata exists
+    to capture.
+pointer_note: >-
+  No `MCPServer` pointer is wired into apis.yml. A pointer would assert that Bloomberg serves an
+  MCP endpoint, and it does not. Same rule as the agent card: presence is only claimed on a hit.
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
