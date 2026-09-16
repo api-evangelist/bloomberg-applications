@@ -1,13 +1,14 @@
 aid: bloomberg-applications
 name: Bloomberg Applications
-description: Bloomberg's financial data and application API surface, covering the BLPAPI family (Desktop API, Server
-  API and B-PIPE) reached through first-party C++, Java, C#/.NET and Python SDKs, and the Data License Hypermedia
-  API served over HTTP at api.bloomberg.com/eap. The surface delivers real-time and historical pricing, reference
-  data, intraday bars and ticks, and streaming market data subscriptions. BLPAPI is an asynchronous binary event
-  protocol rather than a REST API, so it carries no HTTP status codes, rate-limit headers or idempotency keys; errors
-  and quota exhaustion arrive as typed messages on the event queue. Bloomberg publishes no OpenAPI description,
-  no public pricing and no self-service signup — data access is entitlement-gated and provisioned under contract
-  — but the SDKs, their full version archive and the BLPAPI developer guides are downloadable without an account.
+description: Bloomberg's financial data and application API surface, covering the BLPAPI family (Desktop
+  API, Server API and B-PIPE) reached through first-party C++, Java, C#/.NET and Python SDKs, and the
+  Data License Hypermedia API served over HTTP at api.bloomberg.com/eap. The surface delivers real-time
+  and historical pricing, reference data, intraday bars and ticks, and streaming market data subscriptions.
+  BLPAPI is an asynchronous binary event protocol rather than a REST API, so it carries no HTTP status
+  codes, rate-limit headers or idempotency keys; errors and quota exhaustion arrive as typed messages
+  on the event queue. Bloomberg publishes no OpenAPI description, no public pricing and no self-service
+  signup — data access is entitlement-gated and provisioned under contract — but the SDKs, their full
+  version archive and the BLPAPI developer guides are downloadable without an account.
 type: Index
 deliveryModel:
   model: saas
@@ -47,13 +48,13 @@ tags_raw:
 - Real-Time Data
 url: https://raw.githubusercontent.com/api-evangelist/bloomberg-applications/refs/heads/main/apis.yml
 created: '2024-01-01'
-modified: '2026-08-27'
+modified: '2026-09-16'
 specificationVersion: '0.23'
 apis:
 - aid: bloomberg-applications:bloomberg-data-api
   name: Bloomberg Data API
-  description: Provides programmatic access to Bloomberg's financial market data including real-time and historical
-    pricing, reference data, and analytics.
+  description: Provides programmatic access to Bloomberg's financial market data including real-time and
+    historical pricing, reference data, and analytics.
   humanURL: https://professional.bloomberg.com/products/data/data-management/data-license/
   baseURL: https://api.bloomberg.com/eap/
   tags:
@@ -68,11 +69,11 @@ apis:
     url: authentication/bloomberg-applications-authentication.yml
 - aid: bloomberg-applications:bloomberg-terminal-connect-api
   name: Bloomberg Terminal Connect API
-  description: 'Desktop API for accessing Bloomberg Terminal functionality programmatically through Excel, custom
-    applications, and third-party systems. No public baseURL is recorded because none exists: the BLPAPI Desktop
-    API connects to the local Bloomberg Communication Server process on the operator''s own machine (127.0.0.1:8194)
-    and inherits authorization from the logged-in Terminal session, so the endpoint is the consumer''s workstation
-    rather than a Bloomberg-hosted host.'
+  description: 'Desktop API for accessing Bloomberg Terminal functionality programmatically through Excel,
+    custom applications, and third-party systems. No public baseURL is recorded because none exists: the
+    BLPAPI Desktop API connects to the local Bloomberg Communication Server process on the operator''s
+    own machine (127.0.0.1:8194) and inherits authorization from the logged-in Terminal session, so the
+    endpoint is the consumer''s workstation rather than a Bloomberg-hosted host.'
   humanURL: https://professional.bloomberg.com/support/api-library/
   tags:
   - Desktop API
@@ -87,6 +88,8 @@ apis:
   - type: SDKs
     url: packages/bloomberg-applications-packages.yml
 common:
+- type: Website
+  url: https://bloomberg.com
 - type: ParentCompany
   url: https://apis.io/providers/bloomberg/
   name: Bloomberg
