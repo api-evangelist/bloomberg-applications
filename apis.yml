@@ -92,6 +92,8 @@ apis:
   - type: SDKs
     url: packages/bloomberg-applications-packages.yml
 common:
+- type: FinOps
+  url: finops/bloomberg-applications-finops.yml
 - type: Website
   url: https://bloomberg.com
 - type: ParentCompany
