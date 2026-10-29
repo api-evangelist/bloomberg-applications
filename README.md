@@ -1,4 +1,4 @@
-# Bloomberg APIs (bloomberg-applications)
+# Bloomberg Applications
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,90 +64,126 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Collection of Bloomberg's financial data and application APIs
+Bloomberg's financial data and application API surface, covering the BLPAPI family (Desktop API, Server API and B-PIPE) reached through first-party C++, Java, C#/.NET and Python SDKs, and the Data License Hypermedia API served over HTTP at api.bloomberg.com/eap. The surface delivers real-time and historical pricing, reference data, intraday bars and ticks, and streaming market data subscriptions. BLPAPI is an asynchronous binary event protocol rather than a REST API, so it carries no HTTP status codes, rate-limit headers or idempotency keys; errors and quota exhaustion arrive as typed messages on the event queue. Bloomberg publishes no OpenAPI description, no public pricing and no self-service signup — data access is entitlement-gated and provisioned under contract — but the SDKs, their full version archive and the BLPAPI developer guides are downloadable without an account.
 
-**URL:** [Visit APIs.json URL](https://raw.githubusercontent.com/api-evangelist/bloomberg-applications/refs/heads/main/apis.yml)
+**Areas:** Enterprise API · Financial Analytics · Financial Services · Market Data · Real-Time Data
 
-## Tags:
+## Bloomberg Applications on APIs.io
 
- - Financial Services, Market Data, Real-time Data, Financial Analytics, Enterprise API
+Everything profiled for Bloomberg Applications is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/bloomberg-applications/](https://apis.io/providers/bloomberg-applications/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (2)
 
-- **Created:** 2024 
-- **Modified:** 2024 
+- [Bloomberg Data API](https://apis.io/apis/bloomberg-applications/bloomberg-data-api/) — Provides programmatic access to Bloomberg's financial market data including real-time and historical pricing, reference data, and analytics.
+- [Bloomberg Terminal Connect API](https://apis.io/apis/bloomberg-applications/bloomberg-terminal-connect-api/) — Desktop API for accessing Bloomberg Terminal functionality programmatically through Excel, custom applications, and third-party systems. No public baseURL…
 
-## APIs
+### Published properties
 
-### Bloomberg Data API
-Provides programmatic access to Bloomberg's financial market data including real-time and historical pricing, reference data, and analytics
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-**Human URL:** [https://www.bloomberg.com/professional/support/api-library/](https://www.bloomberg.com/professional/support/api-library/)
+#### AsyncAPI (1)
 
+Event-driven and webhook contracts.
 
-#### Tags:
+- [Bloomberg Applications Blpapi Events](https://apis.io/asyncapis/bloomberg-applications/bloomberg-applications-blpapi-events/)
 
- - Financial Data, Market Data, Real-time, Historical Data
+#### Security (3)
 
-#### Properties
+Authentication, trust centre, and vulnerability disclosure.
 
-- [Documentation](https://www.bloomberg.com/professional/support/api-library/)
-- [OpenAPI](https://api.bloomberg.com/openapi.json)
-- [Authentication](https://www.bloomberg.com/professional/support/api-library/#authentication)
+- [Bloomberg Applications Authentication](https://apis.io/security/bloomberg-applications/bloomberg-applications-authentication/)
+- [Bloomberg Applications Domain Security](https://apis.io/security/bloomberg-applications/bloomberg-applications-domain-security/)
+- [Bloomberg Applications Vulnerability Disclosure](https://apis.io/security/bloomberg-applications/bloomberg-applications-vulnerability-disclosure/)
 
-### Bloomberg Terminal Connect API
-Desktop API for accessing Bloomberg Terminal functionality programmatically through Excel, custom applications, and third-party systems
+#### OAuth scopes (1)
 
-**Human URL:** [https://www.bloomberg.com/professional/support/api-library/](https://www.bloomberg.com/professional/support/api-library/)
+The permissions the API asks for.
 
+- [Bloomberg Applications Scopes](https://apis.io/scopes/bloomberg-applications/bloomberg-applications-scopes/)
 
-#### Tags:
+#### Plans and pricing (1)
 
- - Terminal, Desktop API, Excel Integration, Financial Analytics
+Published plans, tiers and prices.
 
-#### Properties
+- [Bloomberg Applications Plans Pricing](https://apis.io/plans/bloomberg-applications/bloomberg-applications-plans-pricing/)
 
-- [Documentation](https://www.bloomberg.com/professional/support/api-library/)
-- [SDK](https://www.bloomberg.com/professional/support/api-library/#sdk-downloads)
+#### Rate limits (1)
 
-### Bloomberg B-PIPE
-Real-time streaming market data feed delivering tick-by-tick data, order book information, and corporate actions
+Published request limits.
 
-**Human URL:** [https://www.bloomberg.com/professional/product/market-data-feed/](https://www.bloomberg.com/professional/product/market-data-feed/)
+- [Bloomberg Applications Rate Limits](https://apis.io/rate-limits/bloomberg-applications/bloomberg-applications-rate-limits/)
 
+#### FinOps (1)
 
-#### Tags:
+What the API costs to run, by operation.
 
- - Streaming Data, Real-time Feed, Market Data, Enterprise
+- [Bloomberg Applications Finops](https://apis.io/finops/bloomberg-applications/bloomberg-applications-finops/)
 
-#### Properties
+## Where to find this API
 
-- [Documentation](https://www.bloomberg.com/professional/product/market-data-feed/)
-- [Pricing](https://www.bloomberg.com/professional/product/market-data-feed/#pricing)
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-### Bloomberg SAPI (Server API)
-Server-based API for historical data, reference data, and intraday bars delivered in bulk to enterprise applications
+- [Website](https://bloomberg.com)
+- [Documentation](https://professional.bloomberg.com/support/documentation/)
+- [Getting started](https://professional.bloomberg.com/support/api-library/)
+- [API reference](https://bloomberg.github.io/blpapi-docs/)
+- [Sign up](https://service.blpprofessional.com/portal/product/ureg?referrer=bdev)
+- [Support](https://professional.bloomberg.com/support/)
+- [Terms of service](https://www.bloomberg.com/notices/tos/)
+- [Privacy policy](https://www.bloomberg.com/notices/privacy/)
+- [GitHub](https://github.com/bloomberg)
 
-**Human URL:** [https://www.bloomberg.com/professional/support/api-library/](https://www.bloomberg.com/professional/support/api-library/)
+## API Evangelist rating
 
+**Kin Score 49.0** — developing · rubric 0.25.0 · scored 2026-10-23
 
-#### Tags:
+| Facet | Score |
+|---|---|
+| Discoverability | 64.3 |
+| Contract quality | 39.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 60.5 |
+| Developer ergonomics | 69.0 |
+| Access clarity | 27.6 |
 
- - Server API, Historical Data, Reference Data, Bulk Data
+**Agent readiness 33.5** — agent-ready
 
-#### Properties
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
 
-- [Documentation](https://www.bloomberg.com/professional/support/api-library/)
-- [API Guide](https://www.bloomberg.com/professional/support/api-library/#sapi)
+**Regulatory alignment 43.5** — Securities & Market Data
 
-## Common Properties
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/bloomberg-applications/](https://apis.io/providers/bloomberg-applications/).
 
-- [Terms of Service](https://www.bloomberg.com/terms-of-service/)
-- [Privacy Policy](https://www.bloomberg.com/privacy/)
-- [Getting Started](https://www.bloomberg.com/professional/support/api-library/#getting-started)
+## How this profile is made
 
-## Maintainers
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
 
-**FN:** Bloomberg L.P.
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Bloomberg Applications: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
 
-**Email:** support@bloomberg.com
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/bloomberg-applications/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
